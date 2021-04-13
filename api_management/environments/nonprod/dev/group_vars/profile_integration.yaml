@@ -1,0 +1,62 @@
+---
+
+################### webmethods configs specifics
+
+## passwords
+webmethods_secrets_default_adminuser_password: "{{ vault_webmethods_integrationserver_default_adminuser_password }}"
+
+## Jdbc settings --> must be set in datacenter sub-configs
+## jdbc settings
+webmethods_jdbcpool_internal_name: "PostgresPool"
+webmethods_jdbcpool_internal_description: "The IS Postgres JDBC pool"
+webmethods_jdbcpool_internal_driverAlias: "DataDirect Connect JDBC PostGreSQL Driver"
+webmethods_jdbcpool_internal_databaseUrl: "jdbc:wm:postgresql://ssainfra-reproenv.cn3ljmwh50ev.us-east-1.rds.amazonaws.com:5432;DatabaseName=envdevops_iscoredb"
+webmethods_secrets_jdbcpool_internal_user: "{{ vault_webmethods_integrationserver_jdbcpool_internal_user }}"
+webmethods_secrets_jdbcpool_internal_password: "{{ vault_webmethods_integrationserver_jdbcpool_internal_password }}"
+
+## internal
+is_clustering_use_internal_db: true
+
+## webmethods packages to install
+webmethods_download_files_s3_descriptor: []
+
+## webmethods packages to install
+webmethods_integrationserver_install_packages:
+  - bucket_path: "demo_repo/Sample_APIs/webmethods/SAGTours.zip"
+    target_instance_name: default
+    target_package_name: "SAGTours"
+
+############################################################################
+################### specific configs settings using wxconfig
+################### (note: the merged variables in the IS Common config
+################### are the one loaded by the playbooks)
+############################################################################
+
+## encrypted values
+webmethods_isspecific_wxconfig_encrypted_items:
+  "JDBCPoolDBPassword" : "{{ webmethods_secrets_jdbcpool_internal_password }}"
+
+## ldap settings
+webmethods_isspecific_wxconfig_ldap_servers_list: []
+
+## user passwords
+webmethods_isspecific_wxconfig_userpassword_list: []
+
+## keystores / truststores settings (other than the ones for SSL)
+webmethods_isspecific_wxconfig_keytruststore_list: []
+
+## ports settings (other than the ones for SSL)
+webmethods_isspecific_wxconfig_https_ports_list: []
+
+## jdbc settings
+webmethods_isspecific_wxconfig_jdbc_pools_description: {}
+
+## extended settings
+webmethods_isspecific_wxconfig_extended_settings_list: []
+
+## Permissions settings: ACL / Group / Service to ACL Mapping
+webmethods_isspecific_wxconfig_permissions_groups_list: []
+
+webmethods_isspecific_wxconfig_permissions_acls_list: []
+
+webmethods_isspecific_wxconfig_permissions_service_acl_mapping_list: []

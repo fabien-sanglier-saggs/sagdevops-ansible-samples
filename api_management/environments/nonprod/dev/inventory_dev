@@ -1,0 +1,100 @@
+########################################### global
+
+[all:children]
+all_webmethods
+
+[all_linux:children]
+all_webmethods
+
+[all_webmethods:children]
+apigateway_stack
+integration_stack
+apiportal
+deployer
+
+[apigateway_stack:children]
+apigateway
+apigateway_terracotta
+apigateway_internaldatastore
+
+[integration_stack:children]
+integrationserver
+integrationserver_terracotta
+
+########################################### Profiles specific
+
+[profile_all_webmethods:children]
+profile_internaldatastore
+profile_terracotta
+profile_apigateway
+profile_apiportal
+profile_integrationserver_common
+profile_deployer
+
+[profile_integrationserver_common:children]
+profile_integration
+profile_deployer
+
+[profile_terracotta:children]
+apigateway_terracotta
+
+[profile_internaldatastore:children]
+profile_internaldatastore_coord
+
+[profile_internaldatastore_coord:children]
+apigateway_internaldatastore_coord
+
+[profile_apigateway:children]
+apigateway
+apigateway_dev
+
+[profile_apiportal:children]
+apiportal
+
+[profile_integration:children]
+integrationserver
+
+[profile_deployer:children]
+deployer
+
+########################################### servers
+
+[apigateway_internaldatastore:children]
+apigateway_internaldatastore_requestaccepting_nodes
+apigateway_internaldatastore_coord
+apigateway_internaldatastore_data
+
+[apigateway_internaldatastore_requestaccepting_nodes:children]
+apigateway_internaldatastore_coord
+
+[apigateway_internaldatastore_data:children]
+apigateway_internaldatastore_coord
+
+[apigateway_internaldatastore_coord]
+apigateway_internaldatastore_coord_1 ansible_host=apigwids1.reproenv.local
+apigateway_internaldatastore_coord_2 ansible_host=apigwids2.reproenv.local
+apigateway_internaldatastore_coord_3 ansible_host=apigwids3.reproenv.local
+
+[apigateway_terracotta]
+apigateway_terracotta_1 ansible_host=apigwtc1.reproenv.local
+apigateway_terracotta_2 ansible_host=apigwtc2.reproenv.local
+
+[apigateway]
+apigateway_1 ansible_host=apigw1.reproenv.local
+apigateway_2 ansible_host=apigw2.reproenv.local
+apigateway_3 ansible_host=apigw3.reproenv.local
+
+[apiportal]
+apiportal_1 ansible_host=apiportal1.reproenv.local
+
+[integrationserver]
+integrationserver_1 ansible_host=intserver1.reproenv.local
+integrationserver_2 ansible_host=intserver2.reproenv.local
+integrationserver_3 ansible_host=intserver3.reproenv.local
+
+[integrationserver_terracotta]
+integrationserver_tc_1 ansible_host=is_terracotta1.reproenv.local
+integrationserver_tc_2 ansible_host=is_terracotta2.reproenv.local
+
+[deployer]
+deployer_1 ansible_host=deployer1.reproenv.local

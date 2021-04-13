@@ -1,0 +1,269 @@
+---
+
+#########################################################
+################### IS common
+#########################################################
+
+webmethods_download_files_s3_descriptor: []
+
+webmethods_integrationserver_install_packages: []
+
+## variables there simply to be easily overwritten at runtime -- TODO: let's make it a bit more generic, with an array to be passed
+webmethods_integrationserver_packages_force_reinstall_list: []
+
+#########################################################
+################### wxconfigs common
+#########################################################
+
+## wxconfig packages to install
+webmethods_wxconfig_packages:
+  - bucket_path: "customer_specifics/IRS/packages/WxConfig_1.9.1_final.zip"
+    target_instance_name: default
+    target_package_name: "WxConfig"
+  - bucket_path: "customer_specifics/IRS/packages/AdminUtils.zip"
+    target_instance_name: default
+    target_package_name: "AdminUtils"
+
+## wxconfig license download details
+webmethods_wxconfig_license:
+  - bucket_path: "customer_specifics/IRS/packages/wxconfig_license_v19_20251130.txt"
+    local_path: "{{ wxconfig_configs_dir }}/WxConfig_v1.9.license"
+    local_path_permission: "0644"
+    local_path_create_dir_ifnotexist: "true"
+    local_path_create_dir_permission: "0755"
+    force_download: true
+
+## the target package that should be wxconfig enabled and will contain the wxconfig files
+webmethods_wxconfig_target_package_name: "AdminUtils"
+
+## the wxconfig global settings values
+webmethods_wxconfig_settings:
+  "wx.config.autoSetup.execute": "true"
+  "wx.config.encryptedValues.bulkImport.runOnPackageLoad": "true"
+  "wx.config.reloadStrategy": "ON_CHANGE"
+  "wx.config.reloadInterval": "30000"
+
+## flag to remove configs before applying new ones (generally not needed)
+webmethods_wxconfig_clear: false
+
+## unique ID for the wxconfig
+webmethods_wxconfig_groupname: "isruntime"
+
+################################################################################
+################### merging the common configs with the specific configs
+################### these variable names are the one loaded by the playbooks
+################################################################################
+
+webmethods_wxconfig_encrypted_items: "{{ webmethods_iscommon_wxconfig_common_encrypted_items | combine(webmethods_isspecific_wxconfig_encrypted_items) }}"
+webmethods_wxconfig_userpassword_list: "{{ webmethods_iscommon_wxconfig_userpassword_list + webmethods_isspecific_wxconfig_userpassword_list }}"
+webmethods_wxconfig_keytruststore_list: "{{ webmethods_iscommon_wxconfig_keytruststore_list + webmethods_isspecific_wxconfig_keytruststore_list }}"
+webmethods_wxconfig_https_ports_list: "{{ webmethods_iscommon_wxconfig_https_ports_list + webmethods_isspecific_wxconfig_https_ports_list }}"
+webmethods_wxconfig_jdbc_pools_description: "{{ webmethods_isspecific_wxconfig_jdbc_pools_description }}"
+webmethods_wxconfig_extended_settings_list: "{{ webmethods_iscommon_wxconfig_extended_settings_list + webmethods_isspecific_wxconfig_extended_settings_list }}"
+webmethods_wxconfig_permissions_groups_list: "{{ webmethods_iscommon_wxconfig_permissions_groups_list + webmethods_isspecific_wxconfig_permissions_groups_list }}"
+webmethods_wxconfig_permissions_acls_list: "{{ webmethods_iscommon_wxconfig_permissions_acls_list + webmethods_isspecific_wxconfig_permissions_acls_list }}"
+webmethods_wxconfig_permissions_service_acl_mapping_list: "{{ webmethods_iscommon_wxconfig_permissions_service_acl_mapping_list + webmethods_isspecific_wxconfig_permissions_service_acl_mapping_list }}"
+webmethods_wxconfig_ldap_servers_list: "{{ webmethods_iscommon_wxconfig_ldap_servers_list + webmethods_isspecific_wxconfig_ldap_servers_list }}"
+webmethods_wxconfig_ldap_settings:
+  numberOfUsers: 10
+  credentialTimeToLiveMin: 60
+  server_list: "{{ webmethods_wxconfig_ldap_servers_list }}"
+
+############################################################################
+################### specific configs settings to be overriden by IS children as needed
+############################################################################
+
+## encrypted values
+webmethods_isspecific_wxconfig_encrypted_items: {}
+
+## ldap settings
+webmethods_isspecific_wxconfig_ldap_servers_list: []
+
+## user passwords
+webmethods_isspecific_wxconfig_userpassword_list: []
+
+## keystores / truststores settings (other than the ones for SSL)
+webmethods_isspecific_wxconfig_keytruststore_list: []
+
+## ports settings (other than the ones for SSL)
+webmethods_isspecific_wxconfig_https_ports_list: []
+
+## jdbc settings
+webmethods_isspecific_wxconfig_jdbc_pools_description: {}
+
+## extended settings
+webmethods_isspecific_wxconfig_extended_settings_list: []
+
+## Permissions settings: ACL / Group / Service to ACL Mapping
+webmethods_isspecific_wxconfig_permissions_groups_list: []
+webmethods_isspecific_wxconfig_permissions_acls_list: []
+webmethods_isspecific_wxconfig_permissions_service_acl_mapping_list: []
+
+#########################################################
+################### wxconfigs common additive settings
+#########################################################
+
+## encrypted values
+webmethods_iscommon_wxconfig_common_encrypted_items:
+  "AdministratorPassword" : "{{ webmethods_secrets_default_adminuser_password}}"
+  "LDAP1AuthPassword" : "{{ webmethods_common_ldap_settings.auth_password }}"
+
+## user passwords
+webmethods_iscommon_wxconfig_userpassword_list:
+  - userlogin: "Administrator"
+    userpassword_encrypted_handle: "AdministratorPassword"
+    updateIfExists: "true"
+    deleteOnUnload: "false"
+
+## keystores / truststores settings (other than the ones for SSL)
+webmethods_iscommon_wxconfig_keytruststore_list: []
+
+## ports settings (other than the ones for SSL)
+webmethods_iscommon_wxconfig_https_ports_list: []
+
+## jdbc settings
+webmethods_iscommon_wxconfig_jdbc_pools_description: {}
+
+## extended settings
+webmethods_iscommon_wxconfig_extended_settings_list:
+  - name: "watt.net.timeout"
+    value: "400"
+    type: "add"
+    visibility: "show"
+  - name: "watt.server.threadPool"
+    value: "500"
+    type: "add"
+    visibility: "show"
+  - name: "watt.server.threadPoolMin"
+    value: "10"
+    type: "add"
+    visibility: "show"
+  - name: "watt.server.control.serverThreadThreshold"
+    value: "20"
+    type: "add"
+    visibility: "show"
+
+## Permissions settings: ACL / Group / Service to ACL Mapping
+webmethods_iscommon_wxconfig_permissions_groups_list: []
+
+## IMPORTANT: if modifying the built-in ACLs, Make sure the default expected groups are added in the config 
+# ie. Administrators group MUST be in ACL Administrators
+# ie. Administrators and Developers groups MUST be in ACL Developers
+# etc...
+webmethods_iscommon_wxconfig_permissions_acls_list:
+  - name: Administrators
+    updateIfExists: true
+    deleteOnUnload: false
+    groups:
+      - "Administrators"
+      - "LDAP/apigateway-admins"
+  - name: Developers
+    updateIfExists: true
+    deleteOnUnload: false
+    groups:
+      - "Administrators"
+      - "Developers"
+      - "LDAP/apigateway-providers"
+
+webmethods_iscommon_wxconfig_permissions_service_acl_mapping_list: []
+
+## ldap settings
+webmethods_iscommon_wxconfig_ldap_servers_list:
+  - updateIfExists: true
+    deleteOnUnload: false
+    url: "{{ webmethods_common_ldap_settings.url }}"
+    authentication:
+      principal: "{{ webmethods_common_ldap_settings.auth_username }}"
+      password_encrypted_handle: "LDAP1AuthPassword"
+    connection:
+      timeoutSec: 5
+      poolSize_min: 0
+      poolSize_max: 10
+    users:
+      synthesize:
+        prefix:
+        suffix:
+      query:
+        idproperty: "{{ webmethods_common_ldap_settings.users_id_attribute }}"
+        rootdn: "{{ webmethods_common_ldap_settings.users_root_dn }}"
+    groups:
+      default: Everybody
+      memberattribute: "{{ webmethods_common_ldap_settings.groups_member_attribute }}"
+      query:
+        idproperty: "{{ webmethods_common_ldap_settings.groups_id_attribute }}"
+        rootdn: "{{ webmethods_common_ldap_settings.groups_root_dn }}"
+
+#########################################################
+################### wxconfigs SSL specific
+#########################################################
+
+## unique ID for the wxconfig
+webmethods_wxconfig_ssl_groupname: "ssl"
+
+## encrypted values
+webmethods_wxconfig_ssl_encrypted_params:
+  "SAGKeystorePassword" : "{{ webmethods_secrets_keystore_password }}"
+  "SAGKeyPassword" : "{{ webmethods_secrets_keystore_keyalias_password }}"
+  "SAGTruststorePassword" : "{{ webmethods_secrets_truststore_password }}"
+
+## SSL keystores / truststores settings
+webmethods_wxconfig_ssl_keytruststore_list:
+  - keyStore:
+      alias: "{{ webmethods_keystore_aliasname }}"
+      updateIfExists: "true"
+      reloadOnStart: "true"
+      destroyOnShutdown: "false"
+      description: "{{ webmethods_keystore_description }}"
+      type: "{{ webmethods_keystore_type }}"
+      provider: "{{ webmethods_keystore_provider }}"
+      location: "{{ webmethods_keystore_local_path }}"
+      password_encrypted_handle: "SAGKeystorePassword"
+      isHsmBased: "false"
+      keylist:
+        - alias: "{{ webmethods_keystore_keyalias }}"
+          password_encrypted_handle: "SAGKeyPassword"
+    trustStore:
+      alias: "{{ webmethods_truststore_aliasname }}"
+      updateIfExists: "true"
+      reloadOnStart: "true"
+      destroyOnShutdown: "false"
+      description: "{{ webmethods_truststore_description }}"
+      type: "{{ webmethods_truststore_type }}"
+      provider: "{{ webmethods_truststore_provider }}"
+      location: "{{ webmethods_truststore_local_path }}"
+      password_encrypted_handle: "SAGTruststorePassword"
+
+## SSL ports settings
+webmethods_wxconfig_ssl_https_ports_list:
+  - alias: "SAGSecurePort"
+    updateIfExists: "true"
+    autoStart: "true"
+    autoShutdown: "false"
+    destroyOnShutdown: "false"
+    package: "WmRoot"
+    description: "HTTPS port"
+    port: "5443"
+    bindAddress: "0.0.0.0"
+    backlog: 200
+    keepAliveTimeoutMillis: 20000
+    threadPool:
+      enabled: "true"
+      min: 5
+      max: 20
+      priority: 5
+    useJsse: "true"
+    clientAuthentication: "none"
+    keystoreAlias: "{{ webmethods_keystore_aliasname }}"
+    keyAlias: "{{ webmethods_keystore_keyalias }}"
+    truststoreAlias: "{{ webmethods_truststore_aliasname }}"
+
+## SSL extended settings
+webmethods_wxconfig_ssl_extended_settings_list:
+  - name: "watt.server.ssl.keyStoreAlias"
+    value: "{{ webmethods_keystore_aliasname }}"
+    type: "add"
+    visibility: "show"
+  - name: "watt.server.ssl.trustStoreAlias"
+    value: "{{ webmethods_truststore_aliasname }}"
+    type: "add"
+    visibility: "show"

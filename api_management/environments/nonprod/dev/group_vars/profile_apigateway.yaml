@@ -1,0 +1,405 @@
+---
+
+################### rest apis
+
+webmethods_apigateway_base_uri: "http://localhost:5555"
+
+################### webmethods runtime configs specifics
+
+# user/passwords
+webmethods_secrets_default_adminuser_password_default: "{{ vault_webmethods_apigateway_default_adminuser_password_default }}"
+webmethods_secrets_default_adminuser_password_old: "{{ vault_webmethods_apigateway_default_adminuser_password_old }}"
+webmethods_secrets_default_adminuser_password: "{{ vault_webmethods_apigateway_default_adminuser_password }}"
+webmethods_secrets_default_apiportalgateway_gateway_user: "{{ vault_webmethods_apigateway_apiportalgateway_gateway_user }}"
+webmethods_secrets_default_apiportalgateway_gateway_password: "{{ vault_webmethods_apigateway_apiportalgateway_gateway_password }}"
+webmethods_secrets_default_apiportalgateway_apiportal_user: "{{ vault_webmethods_apigateway_apiportalgateway_apiportal_user }}"
+webmethods_secrets_default_apiportalgateway_apiportal_password: "{{ vault_webmethods_apigateway_apiportalgateway_apiportal_password }}"
+webmethods_secrets_promotionsmgt_user: "{{ vault_webmethods_apigateway_promotionsmgt_user }}"
+webmethods_secrets_promotionsmgt_password: "{{ vault_webmethods_apigateway_promotionsmgt_password }}"
+webmethods_secrets_apigateway_elasticsearch_user: "{{ vault_webmethods_apigateway_elasticsearch_user }}"
+webmethods_secrets_apigateway_elasticsearch_userpassword: "{{ vault_webmethods_apigateway_elasticsearch_userpassword }}"
+
+## internal
+is_clustering_use_internal_db: true
+
+## apigateway keystore / truststore names and descriptions
+webmethods_apigateway_truststore_filepath: "{{ webmethods_truststore_local_path }}"
+webmethods_apigateway_truststore_filename: "{{ webmethods_truststore_filename }}"
+webmethods_apigateway_truststore_name: "{{ webmethods_truststore_aliasname }}"
+webmethods_apigateway_truststore_type: "{{ webmethods_truststore_type }}"
+webmethods_apigateway_truststore_provider: "{{ webmethods_truststore_provider }}"
+webmethods_apigateway_truststore_description: "{{ webmethods_truststore_description }}"
+webmethods_apigateway_truststore_password: "{{ webmethods_secrets_truststore_password }}"
+
+webmethods_apigateway_keystore_filepath: "{{ webmethods_keystore_local_path }}"
+webmethods_apigateway_keystore_filename: "{{ webmethods_keystore_filename }}"
+webmethods_apigateway_keystore_name: "{{ webmethods_keystore_aliasname }}"
+webmethods_apigateway_keystore_type: "{{ webmethods_keystore_type }}"
+webmethods_apigateway_keystore_provider: "{{ webmethods_keystore_provider }}"
+webmethods_apigateway_keystore_description: "{{ webmethods_keystore_description }}"
+webmethods_apigateway_keystore_password: "{{ webmethods_secrets_keystore_password }}"
+webmethods_apigateway_keystore_keyalias: "{{ webmethods_keystore_keyalias }}"
+webmethods_apigateway_keystore_keyalias_password: "{{ webmethods_secrets_keystore_keyalias_password }}"
+
+## apigateway UI SSL values
+webmethods_apigateway_ui_props_https_keystore_path: "{{ webmethods_apigateway_keystore_filepath }}"
+webmethods_apigateway_ui_props_https_keystore_password: "{{ webmethods_apigateway_keystore_password }}"
+webmethods_apigateway_ui_props_https_truststore_path: "{{ webmethods_apigateway_truststore_filepath }}"
+webmethods_apigateway_ui_props_https_truststore_password: "{{ webmethods_apigateway_truststore_password }}"
+
+## SAML specifics
+## note: important that the boolean fields be quoted strings
+webmethods_apigateway_saml_enabled: "true"
+webmethods_apigateway_saml_sp_id: "apigateway105-ui-irsrepro.clouddemo.saggov.com"
+webmethods_apigateway_saml_sp_metadata_path: "{{ webmethods_install_dir }}/IntegrationServer/instances/default/config/saml_apigw_sp_metadata.xml"
+webmethods_apigateway_saml_ldp_metadata_path: "{{ webmethods_install_dir }}/IntegrationServer/instances/default/config/saml_idp_metadata.xml"
+webmethods_apigateway_saml_redirect: "/saml/sso/login"
+webmethods_apigateway_saml_assertion_signed: "true"
+webmethods_apigateway_saml_authreq_signed: "true"
+webmethods_apigateway_saml_keystore_type: "JKS"
+webmethods_apigateway_saml_keystore_filepath: "{{ webmethods_apigateway_keystore_filepath }}"
+webmethods_apigateway_saml_keystore_password: "{{ webmethods_apigateway_keystore_password }}"
+webmethods_apigateway_saml_keystore_defaultkey_alias: "{{ webmethods_apigateway_keystore_keyalias }}"
+webmethods_apigateway_saml_keystore_defaultkey_password: "{{ webmethods_apigateway_keystore_keyalias_password }}"
+webmethods_apigateway_saml_keystore_signkey_alias: "{{ webmethods_apigateway_keystore_keyalias }}"
+webmethods_apigateway_saml_keystore_signkey_password: "{{ webmethods_apigateway_keystore_keyalias_password }}"
+webmethods_apigateway_saml_keystore_encrypkey_alias: "{{ webmethods_apigateway_keystore_keyalias }}"
+webmethods_apigateway_saml_keystore_encrypkey_password: "{{ webmethods_apigateway_keystore_keyalias_password }}"
+webmethods_apigateway_saml_files_downloads_descriptor:
+  - bucket_path: "customer_specifics/IRS/configurations/irs_reproenv_apigw105_okta_metadata.xml"
+    local_path: "{{ webmethods_apigateway_saml_ldp_metadata_path }}"
+    local_path_permission: "0644"
+    force_download: "true"
+webmethods_apigateway_saml_sp_metadata_external_uri: "https://apigateway105-ui-irsrepro.clouddemo.saggov.com:443"
+webmethods_apigateway_saml_groups_mapping_list:
+  - saml_group_name: apigateway-admins
+    local_group_name: saml-apigateway-admins
+  - saml_group_name: apigateway-providers
+    local_group_name: saml-apigateway-providers
+  - saml_group_name: apigateway-users
+    local_group_name: saml-apigateway-users
+  - saml_group_name: test
+    local_group_name: saml-apigateway-users
+
+################### rest configs
+
+## rest login info
+apigateway_rest_login_username: "Administrator"
+apigateway_rest_login_password: "{{ webmethods_secrets_default_adminuser_password}}"
+apigateway_rest_login_password_old: "{{ webmethods_secrets_default_adminuser_password_old}}"
+
+## apigateway truststore details
+webmethods_apigateway_truststore:
+  keyStoreName: "{{ webmethods_apigateway_truststore_name }}"
+  keyStoreType: "{{ webmethods_apigateway_truststore_type }}"
+  keyStoreProvider: "{{ webmethods_apigateway_truststore_provider }}"
+  keyStorePassword: "{{ webmethods_apigateway_truststore_password | b64encode }}"
+  uploadFileName: "{{ webmethods_apigateway_truststore_filename }}"
+  keyStoreDescription: "{{ webmethods_apigateway_truststore_description }}"
+  fileContent: "@{{ webmethods_apigateway_truststore_filepath }}"
+  isPwdBase64Encoded: "true"
+
+## apigateway keystore details
+## pkAliasesList: Comma separated list of alias names in the uploaded keystore file.
+## pkPasswordsList: Comma separated list of passwords in the same order as the aliases specified in pkAliasesList. If a particular key alias does not have a password, it is denoted by space.
+## nullPKpasswds: Comma separated list of boolean values (true/false) indicating whether the particular alias has a password or not in the same order as the aliases specified in pkAliasesList. For each key alias, true indicates that the key alias does not have a password and false indicates that it does have a password.
+webmethods_apigateway_keystore:
+  keyStoreName: "{{ webmethods_apigateway_keystore_name }}"
+  keyStoreType: "{{ webmethods_apigateway_keystore_type }}"
+  keyStoreProvider: "{{ webmethods_apigateway_keystore_provider }}"
+  keyStorePassword: "{{ webmethods_apigateway_keystore_password | b64encode }}"
+  uploadFileName: "{{ webmethods_apigateway_keystore_filename }}"
+  keyStoreDescription: "{{ webmethods_apigateway_keystore_description }}"
+  fileContent: "@{{ webmethods_apigateway_keystore_filepath }}"
+  isPwdBase64Encoded: "true"
+
+# this is for the aliases inside the keystore
+webmethods_apigateway_keystore_keyalias_list:
+  - keyStoreName: "{{ webmethods_apigateway_keystore_name }}"
+    nullPKpasswds: "false"
+    isPwdBase64Encoded: "false"
+    bitarray: "1"
+    pkAliasesList: "{{ webmethods_apigateway_keystore_keyalias }}"
+    pkPasswordsList: "{{ webmethods_apigateway_keystore_keyalias_password }}"
+
+## apigateway keystore/truststore setup for inbound and outbound messages
+webmethods_apigateway_keytruststore_configuration:
+  keystoreName: "{{ webmethods_apigateway_keystore_name }}"
+  signingAlias: "{{ webmethods_apigateway_keystore_keyalias }}"
+  truststoreName: "{{ webmethods_apigateway_truststore_name }}"
+  outboundKeystoreName: "{{ webmethods_apigateway_keystore_name }}"
+  outboundKeyAlias: "{{ webmethods_apigateway_keystore_keyalias }}"
+  outboundTruststoreName: "{{ webmethods_apigateway_truststore_name }}"
+
+## apigateway ports
+webmethods_apigateway_ports_list:
+  - port_type: regular_https
+    port_detail:
+      portAlias: SAGSecurePort
+      portDescription: HTTPS port
+      port: '5443'
+      enable: 'yes'
+      threadPool: 'true'
+      minThread: 5
+      maxThread: 20
+      threadPriority: 5
+      maxQueue: 200
+      keepAliveTimeout: 20000
+      clientAuth: none
+      keyStore: "{{ webmethods_apigateway_keystore_name }}"
+      alias: "{{ webmethods_apigateway_keystore_keyalias }}"
+      trustStore: "{{ webmethods_apigateway_truststore_name }}"
+    access_mode:
+      accessMode: allow
+      pkg: WmRoot
+      port: ""
+      services: []
+    ip_access_mode:
+      ipAccessType: allow
+      pkg: WmRoot
+      hostsList: []
+  - port_type: internal_https
+    port_detail:
+      portAlias: InternalPort
+      portDescription:
+      port: '7443'
+      proxyHost: test.com
+      enable: 'yes'
+      threadPool: 'true'
+      minThread: '1'
+      maxThread: '5'
+      threadPriority: '5'
+      maxConnections: '5'
+      keepAliveTimeout: '20000'
+      clientAuth: none
+      username: Admin
+      password: test
+      keyStore: "{{ webmethods_apigateway_keystore_name }}"
+      alias: "{{ webmethods_apigateway_keystore_keyalias }}"
+      trustStore: "{{ webmethods_apigateway_truststore_name }}"
+    access_mode:
+      accessMode: allow
+      pkg: WmRoot
+      port: ""
+      services: []
+    ip_access_mode:
+      ipAccessType: allow
+      pkg: WmRoot
+      hostsList: []
+  - port_type: external_https
+    port_detail:
+      portAlias: ExternalPort
+      portDescription: External Port
+      port: '8443'
+      bindAddress: 0.0.0.0
+      enable: 'yes'
+      threadPool: 'true'
+      minThread: '1'
+      maxThread: '5'
+      threadPriority: '5'
+      maxConnections: '5'
+      keepAliveTimeout: '20000'
+      maxQueue: '200'
+      keyStore: "{{ webmethods_apigateway_keystore_name }}"
+      alias: "{{ webmethods_apigateway_keystore_keyalias }}"
+      trustStore: "{{ webmethods_apigateway_truststore_name }}"
+      clientAuth: none
+      krbJaasContext: ''
+      krbClientPrincipal: ''
+      krbClientPassword: ''
+      retype_krbClientPassword: ''
+      krbServicePrincipalForm: username
+      krbServicePrincipal: ''
+      addInternalPorts: {}
+      internalPort: '9443'
+      internalPortAlias: registration_listener
+      internalPortDescription: test
+      internalEnable: 'yes'
+      internalSsl: 'true'
+      internalClientAuth: none
+      internalBindAddress: 0.0.0.0
+      internalPkg: WmRoot
+      internalUseJSSE: 'yes'
+      internalalias: "{{ webmethods_apigateway_keystore_keyalias }}"
+      internalkeyStore: "{{ webmethods_apigateway_keystore_name }}"
+      internaltrustStore: "{{ webmethods_apigateway_truststore_name }}"
+    access_mode:
+      accessMode: allow
+      pkg: WmRoot
+      port: ""
+      services: []
+    ip_access_mode:
+      ipAccessType: allow
+      pkg: WmRoot
+      hostsList: []
+  - port_type: websocket
+    port_detail:
+      portAlias: WebsocketPort
+      portDescription: Websocket Port
+      port: '7777'
+      bindAddress: 0.0.0.0
+      enable: 'yes'
+      maxQueue: '200'
+      idleTimeout: '60000'
+    access_mode:
+      accessMode: allow
+      pkg: WmRoot
+      port: ""
+      services: []
+    ip_access_mode:
+      ipAccessType: allow
+      pkg: WmRoot
+      hostsList: []
+
+## extended settings - is runtime settings (note: this must be run on all the nodes)
+webmethods_apigateway_extended_settings_isruntime_watt_keys:
+  watt.server.ssl.trustStoreAlias: "{{ webmethods_apigateway_truststore_name }}"
+  watt.server.ssl.keyStoreAlias: "{{ webmethods_apigateway_keystore_name }}"
+  watt.net.timeout: 400
+  watt.server.threadPool: 500
+  watt.server.threadPoolMin: 50
+  watt.server.control.serverThreadThreshold: 20
+
+## extended settings - apigateway settings (note: this are replicated in the cluster)
+webmethods_apigateway_extended_settings_coregateway_extended_keys: {}
+
+## local users
+webmethods_apigateway_usermgt_users: []
+
+## local user groups
+webmethods_apigateway_usermgt_groups:
+  - name: groupname1
+    description: group1 description
+    empty_user_ids: false
+    user_ids_add: []
+  - name: groupname2
+    description: group2 description
+    empty_user_ids: false
+    user_ids_add: []
+  - name:  saml-apigateway-admins
+    description: apigateway-admins
+    empty_user_ids: false
+    user_ids_add: []
+  - name:  saml-apigateway-providers
+    description: apigateway-providers
+    empty_user_ids: false
+    user_ids_add: []
+  - name: saml-apigateway-users
+    description: apigateway-users
+    empty_user_ids: false
+    user_ids_add: []
+
+## access profiles (note: the group names / user names will get replaced by their IDs in the real REST request, and merged with the userIds/groupIds fields)
+webmethods_apigateway_usermgt_accessprofiles:
+  - name: apigateway-users-team
+    description: apigateway-users-team description
+    privilege: "10010010010100000001010001"
+    groupnames:
+      - groupname1
+      - groupname2
+      - saml-apigateway-users
+    groupIds:
+      - "LDAP/apigateway-users"
+    teamAdmin:
+      usernames: []
+      groupnames: []
+  - name: apigateway-providers-team
+    description: apigateway-providers-team description
+    privilege: "111111111111111111111111100"
+    groupnames:
+      - groupname1
+      - groupname2
+      - saml-apigateway-providers
+    groupIds:
+      - "LDAP/apigateway-providers"
+    teamAdmin:
+      usernames: []
+      groupnames: []
+  - name: apigateway-admins-team
+    description: apigateway-admins-team description
+    privilege: "111111111111111111111111111"
+    groupnames:
+      - saml-apigateway-admins
+    groupIds:
+      - "LDAP/apigateway-admins"
+    teamAdmin:
+      usernames: []
+      groupnames: []
+
+## load balancers
+webmethods_apigateway_loadbalancers_http_urls:
+  - "http://apigateway105-irsrepro.clouddemo.saggov.com"
+webmethods_apigateway_loadbalancers_https_urls:
+  - "https://apigateway105-irsrepro.clouddemo.saggov.com"
+webmethods_apigateway_loadbalancers_websocket_urls: []
+webmethods_apigateway_loadbalancers_webapp_url: "https://apigateway105-ui-irsrepro.clouddemo.saggov.com"
+
+## api portal registration
+## TODO: use API PORTAL LB / SSL URL
+webmethods_apigateway_portalgateway:
+  gatewayName: "API_Gateway_{{ environment_level }}"
+  gatewayDescription: "API Portal gateway in {{ environment_level }} environment"
+  gatewayUsername: "{{ webmethods_secrets_default_apiportalgateway_gateway_user }}"
+  gatewayPassword: "{{ webmethods_secrets_default_apiportalgateway_gateway_password }}"
+  gatewayURL: "https://apigateway105-irsrepro.clouddemo.saggov.com"
+  version: "1.0"
+  stageName: "{{ environment_level }}"
+  published: true
+  externalPortal:
+    endpointTenant: "default"
+    endpointURL: "http://apiportal1.irsrepro.clouddemo.saggov.local:18101"
+    endpointUsername: "{{ webmethods_secrets_default_apiportalgateway_apiportal_user }}"
+    endpointPassword: "{{ webmethods_secrets_default_apiportalgateway_apiportal_password }}"
+    type: "apiportal"
+
+webmethods_apigateway_promotions_stages:
+  - name: "{{ environment_level }}"
+    description: "{{ environment_level }} Stage"
+    url: "https://apigateway105-irsrepro.clouddemo.saggov.com"
+    username: "{{ webmethods_secrets_promotionsmgt_user }}"
+    password: "{{ webmethods_secrets_promotionsmgt_password }}"
+    keystoreAlias: "{{ webmethods_apigateway_keystore_name }}"
+    keyAlias: "{{ webmethods_apigateway_keystore_keyalias }}"
+
+webmethods_apigateway_ldap_settings:
+  ldapConfig:
+    cacheSize: '10'
+    cacheTTL: '60'
+    provider: LDAP
+    ldapDirectoryList:
+    - index: 0
+      url: "{{ webmethods_common_ldap_settings.url }}"
+      principal: "{{ webmethods_common_ldap_settings.auth_username }}"
+      password: "{{ webmethods_common_ldap_settings.auth_password }}"
+      timeout: '5'
+      poolMin: '0'
+      poolMax: '10'
+      useaf: false
+      dnPrefix:
+      dnSuffix:
+      uidProp: "{{ webmethods_common_ldap_settings.users_id_attribute }}"
+      userRootDn: "{{ webmethods_common_ldap_settings.users_root_dn }}"
+      useCaching: false
+      group: Everyone
+      memberAttribute: "{{ webmethods_common_ldap_settings.groups_member_attribute }}"
+      groupIdProperty: "{{ webmethods_common_ldap_settings.groups_id_attribute }}"
+      groupRootDN: "{{ webmethods_common_ldap_settings.groups_root_dn }}"
+    cdsRunning: false
+
+webmethods_apigateway_saml_settings:
+  saml_enabled: "{{ webmethods_apigateway_saml_enabled }}"
+  saml_redirect: "{{ webmethods_apigateway_saml_redirect }}"
+  saml_sp_id: "{{ webmethods_apigateway_saml_sp_id }}"
+  saml_assertion_signed: "{{ webmethods_apigateway_saml_assertion_signed }}"
+  saml_authreq_signed: "{{ webmethods_apigateway_saml_authreq_signed }}"
+  saml_sp_metadata_url: "{{ webmethods_apigateway_saml_sp_metadata_path }}"
+  saml_ldp_metadata_url: "{{ webmethods_apigateway_saml_ldp_metadata_path }}"
+  saml_keystore_type: "{{ webmethods_apigateway_saml_keystore_type }}"
+  saml_keystore_location: "{{ webmethods_apigateway_saml_keystore_filepath }}"
+  saml_keystore_pwd: "{{ webmethods_apigateway_saml_keystore_password }}"
+  saml_defaultkey_alias: "{{ webmethods_apigateway_saml_keystore_defaultkey_alias }}"
+  saml_defaultkey_pwd: "{{ webmethods_apigateway_saml_keystore_defaultkey_password }}"
+  saml_signkey_alias: "{{ webmethods_apigateway_saml_keystore_signkey_alias }}"
+  saml_signkey_pwd: "{{ webmethods_apigateway_saml_keystore_signkey_password }}"
+  saml_encrypkey_alias: "{{ webmethods_apigateway_saml_keystore_encrypkey_alias }}"
+  saml_encrypkey_pwd: "{{ webmethods_apigateway_saml_keystore_encrypkey_password }}"

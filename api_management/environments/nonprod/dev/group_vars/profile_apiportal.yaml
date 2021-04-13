@@ -1,0 +1,174 @@
+---
+
+################### API Portal cloud agent details
+webmethods_apiportal_acc_host: localhost
+webmethods_apiportal_acc_port: 18011
+webmethods_apiportal_acc_user: "{{ vault_webmethods_apiportal_acc_user }}"
+webmethods_apiportal_acc_password: "{{ vault_webmethods_apiportal_acc_password }}"
+
+################### API Portal Install size profile
+webmethods_apiportal_acc_install_size: "large"
+webmethods_apiportal_loadbalancer_fqdn: ""
+
+################### API Portal JVM settings
+webmethods_apiportal_apiportalbundle_jvm_heap_min: "2G"
+webmethods_apiportal_apiportalbundle_jvm_heap_max: "3G"
+webmethods_apiportal_apiportalbundle_jvm_params:
+  "JAVA-Dcom.sun.jndi.ldap.object.disableEndpointIdentification": "true"
+
+webmethods_apiportal_apiportalbundle_jvm_truststore_path: "{{ webmethods_truststore_local_path }}"
+webmethods_apiportal_apiportalbundle_jvm_truststore_type: "{{ webmethods_truststore_type }}"
+
+################### default local users
+webmethods_apiportal_users_system_username: "{{ vault_webmethods_apiportal_users_system_username }}"
+webmethods_apiportal_users_system_password: "{{ vault_webmethods_apiportal_users_system_password }}"
+webmethods_apiportal_users_system_password_default: "{{ vault_webmethods_apiportal_users_system_password_default }}"
+webmethods_apiportal_users_system_password_old: "{{ vault_webmethods_apiportal_users_system_password_old }}"
+
+webmethods_apiportal_users_superuser_username: "{{ vault_webmethods_apiportal_users_superuser_username }}"
+webmethods_apiportal_users_superuser_password: "{{ vault_webmethods_apiportal_users_superuser_password }}"
+
+################### tenant management
+webmethods_apiportal_tenantmgmt_server: "localhost:18101"
+webmethods_apiportal_tenantmgmt_tenant: "default"
+webmethods_apiportal_tenantmgmt_runas_username: "{{ vault_webmethods_apiportal_tenantmgmt_runas_username }}"
+webmethods_apiportal_tenantmgmt_runas_password: "{{ vault_webmethods_apiportal_tenantmgmt_runas_password }}"
+
+################### groups
+## info: group_operation can be "add" or "delete"
+webmethods_apiportal_groupsmgt_groups_in_groups_bynames:
+  - group_operation: add
+    group_parent: "API Administrator"
+    group_children:
+      - "apiportal-api-administrator"
+  - group_operation: add
+    group_parent: "API Consumer"
+    group_children:
+      - "apiportal-api-consumer"
+  - group_operation: add
+    group_parent: "API Consumption Approvers"
+    group_children:
+      - "apiportal-api-consumption-approvers"
+  - group_operation: add
+    group_parent: "API Provider"
+    group_children:
+      - "apiportal-api-provider"
+  - group_operation: add
+    group_parent: "API User Registration Approvers"
+    group_children:
+      - "apiportal-api-user-registration-approvers"
+
+################### apiportal UMC configs imports
+
+webmethods_apiportal_configs_staging_dir: "{{ webmethods_install_dir }}/configs_imports"
+
+webmethods_apiportal_configs_ldap:
+  enabled: true
+  enable_debug: false
+  import_user_on_login: true
+  associate_user_groups_on_login: true
+  synchronizing_import_groups: true
+  synchronizing_import_parent_groups: true
+  attribute_value_paging: true
+  disallow_local_users: true
+  cache_size: 35000
+  pool_wait_time_millis: 5
+  pool_size: 150
+  pool_time_millis: 180
+  skip_errors: false
+  use_bottomup_method: false
+  use_dn_as_guid: true
+  truststore:
+    file_path: "{{ webmethods_truststore_local_path }}"
+    password: "{{ webmethods_secrets_truststore_password }}"
+    type: "{{ webmethods_truststore_type }}"
+  connection:
+    id: "LDAP"
+    name: "LDAP"
+    url: "{{ webmethods_common_ldap_settings.url }}"
+    backup_url: "{{ webmethods_common_ldap_settings.url }}"
+    principal: "{{ webmethods_common_ldap_settings.auth_username }}"
+    password: "{crypted}dd3e3e758b9503edc490c5b489f6d5154be2bc2083a54c5459470c40e8e02677"
+    use_ssl: false
+    ssl_mode: "STARTTLS"
+    verify_hostnames: false
+    verify_certificates: false
+    concurrent_connections: "100"
+    connection_timeout_millis: 10000
+    read_timeout_millis: 1800000
+    attribute_mapping:
+      common:
+        distinguishedname: "DN"
+        guid: ""
+        objectclass: "objectClass"
+      group:
+        name: "{{ webmethods_common_ldap_settings.groups_id_attribute }}"
+        hasmember: "{{ webmethods_common_ldap_settings.groups_member_attribute }}"
+        user_defined: ""
+      user:
+        name: "{{ webmethods_common_ldap_settings.users_id_attribute }}"
+        firstname: "givenName"
+        lastname: "sn"
+        email: "mail"
+        phone: "telephoneNumber"
+        picture: ""
+        memberof: "{{ webmethods_common_ldap_settings.users_memberof_attribute }}"
+        user_defined: ""
+    behavior:
+      objectclass_group: "group"
+      objectclass_user: "person"
+      search_common_base_dn: ""
+      search_groups_base_dn: "{{ webmethods_common_ldap_settings.groups_root_dn }}"
+      search_users_base_dn: "{{ webmethods_common_ldap_settings.users_root_dn }}"
+      search_groups_filter: "(&(objectClass=*))"
+      search_users_filter: "(&(sAMAccountName=*))"
+      search_recursion_depth: 0
+      search_pagesize: 1000
+      search_referrals: "follow"
+
+webmethods_apiportal_configs_saml_signature_fromidp_truststore_key_alias: "okta"
+webmethods_apiportal_configs_saml_signature_fromportal_keystore_key_alias: "{{ webmethods_keystore_keyalias }}"
+webmethods_apiportal_configs_saml:
+  enabled: true
+  idp_id: "http://www.okta.com/exkxojk1qtgGCe2uT0h7"
+  sp_id: "apiportal105-irsrepro.clouddemo.saggov.com"
+  idp_sso_url: "https://dev-344706.oktapreview.com/app/dev-344706_irsreproenvapiportal105_1/exkxojk1qtgGCe2uT0h7/sso/saml"
+  idp_slo_url: ""
+  binding_type: "POST"
+  signature:
+    assertion_enforce: true
+    request_enforce: true
+    response_enforce: true
+    metadata_enforce: true
+    algorithm: "RSAwithSHA256"
+  keystore:
+    file_path: "{{ webmethods_keystore_local_path }}"
+    alias: "{{ webmethods_apiportal_configs_saml_signature_fromportal_keystore_key_alias }}"
+    password: "{{ webmethods_secrets_keystore_password }}"
+    type: "{{ webmethods_keystore_type }}"
+  truststore:
+    file_path: "{{ webmethods_truststore_local_path }}"
+    alias: "{{ webmethods_apiportal_configs_saml_signature_fromidp_truststore_key_alias }}"
+    password: "{{ webmethods_secrets_truststore_password }}"
+    type: "{{ webmethods_truststore_type }}"
+  user_attributes:
+    firstname: "firstname"
+    lastname: "lastname"
+    email: "email"
+    phone: "phone"
+    memberof: "groups"
+    user_defined: ""
+  advanced:
+    login_using_dn: false
+    decompose_dn: false
+    decompose_dn_login_attribute_in_dn: "uid"
+    auth_context_classes:
+      - unspecified
+      - PasswordProtectedTransport
+    auth_context_comparisons: "minimum"
+    nameid_format: "unspecified"
+    autocreate_user_on_login: true
+    clock_skew_seconds: 0
+    assertion_lifetime_sec: 10
+    assertion_consumer_service_overwrite_url: ""
+    default_tenant: "default"

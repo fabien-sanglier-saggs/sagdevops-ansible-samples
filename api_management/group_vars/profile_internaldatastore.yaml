@@ -1,0 +1,64 @@
+---
+
+## OS settings
+sys_open_ports: "{{ sys_open_ports_spm_all }} + {{ sys_open_ports_internaldatastore_all }}"
+
+limits_user: "{{ webmethods_user }}"
+limits_openfiles: "250000"
+limits_processes: "20000"
+
+sysctl_config:
+  vm.max_map_count: "262144"
+  fs.file-max: "{{ limits_openfiles }}"
+
+################### post install settings
+
+webmethods_product_list:
+  - product_name: "internaldatastore"
+    product_instance_name: ""
+    process_memory_min: 4096
+    process_memory_max: 4096
+    process_params: {}
+
+# the ports to check right after the install
+webmethods_postinstall_validation_ports:
+  - 9240
+  - 9340
+
+# the final ports to check for a completely valid install (post install and configure)
+webmethods_validation_ports: "{{ webmethods_postinstall_validation_ports }}"
+
+################### install / patching descriptors
+
+## Product install
+webmethods_install_products_descriptor_list:
+  - target_install_dir: "{{ webmethods_install_dir }}"
+    installer: "{{ webmethods_install_common_product_installer_descriptor }}"
+    script:
+      bucket_path: "product_repo/webmethods/10.5/scripts/apigateway_ids/APIGWStore105Install.script"
+      local_path: "{{ webmethods_install_common_repo_dir }}/APIGWStore105Install.script"
+      force_download: true
+    binaries_image:
+      bucket_path: "product_repo/webmethods/10.5/images/products/softwareag_105_apigateway_linux_x64.zip"
+      local_path: "{{ webmethods_install_common_repo_dir }}/softwareag_105_apigateway_linux_x64.zip"
+    licenses:
+      - bucket_path: "customer_specifics/IRS/licenses/softwareag/0000563012_APIGatewayAdvanced104.xml"
+        local_path: "{{ webmethods_install_common_repo_dir }}/0000563012_APIGatewayAdvanced104.xml"
+
+## Patch installs
+webmethods_install_patches_descriptor_list:
+  - target_install_dir: "{{ webmethods_install_dir }}"
+    sum_home_dir: "{{ webmethods_install_sum_dir }}"
+    fixes_overinstall: false
+    sum_selfupdate: false
+    script:
+      bucket_path: "product_repo/webmethods/10.5/scripts/apigateway_ids/APIGWStore105Update.script"
+      local_path: "{{ webmethods_install_common_repo_dir }}/APIGWStore105Update.script"
+    binaries_image:
+      bucket_path: "product_repo/webmethods/10.5/images/fixes/apigateway/softwareag_105_apigateway_linux_x64_fixes_20201202.zip"
+      local_path: "{{ webmethods_install_common_repo_dir }}/softwareag_105_apigateway_linux_x64_fixes_20201202.zip"
+
+## product licenses to download and re-install in real path after the initial install
+webmethods_install_product_license_descriptor_list: []
+
+########################################################

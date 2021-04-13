@@ -1,0 +1,80 @@
+---
+
+## OS settings
+sys_open_ports: "{{ sys_open_ports_spm_all }} + {{ sys_open_ports_centrasite_all }}"
+
+limits_user: "{{ webmethods_user }}"
+limits_openfiles: "250000"
+limits_processes: "20000"
+
+sysctl_config:
+  vm.max_map_count: "262144"
+  fs.file-max: "{{ limits_openfiles }}"
+
+################### post install settings
+
+webmethods_postinstall_wm_builtin: true
+webmethods_postinstall_service_create: true
+webmethods_postinstall_command_stop: true
+webmethods_postinstall_service_restart: false
+
+webmethods_postinstall_scriptfiles:
+  - "{{ webmethods_install_dir }}/bin/afterInstallAsRoot.sh"
+  - "{{ webmethods_install_dir }}/CentraSite/bin/AsRootAfterInstall.sh"
+
+webmethods_product_list:
+  - product_name: "centrasite_reg"
+    product_instance_name: ""
+  - product_name: "centrasite"
+    product_instance_name: ""
+    process_memory_min: 4096
+    process_memory_max: 4096
+    process_params: {}
+
+# the ports to check right after the install
+webmethods_postinstall_validation_ports:
+  - 53313
+  - 53307
+
+webmethods_validation_ports_timeout: 600
+
+# the final ports to check ongoingly for a valid install
+webmethods_validation_ports: "{{ webmethods_postinstall_validation_ports }}"
+
+################### install / patching descriptors
+
+## Product install
+webmethods_install_products_descriptor_list:
+  - target_install_dir: "{{ webmethods_install_dir }}"
+    installer: "{{ webmethods_install_common_product_installer_descriptor }}"
+    script:
+      bucket_path: "product_repo/webmethods/10.5/scripts/centrasite/Centrasite105Install.script"
+      local_path: "{{ webmethods_install_common_repo_dir }}/Centrasite105Install.script"
+      force_download: true
+    binaries_image:
+      bucket_path: "product_repo/webmethods/10.5/images/products/softwareag_105_centrasite_linux_x64.zip"
+      local_path: "{{ webmethods_install_common_repo_dir }}/softwareag_105_centrasite_linux_x64.zip"
+    licenses:
+      - bucket_path: "customer_specifics/IRS/licenses/softwareag/0000563017_CentraSite_ActiveSOA100.xml"
+        local_path: "{{ webmethods_install_common_repo_dir }}/0000563017_CentraSite_ActiveSOA100.xml"
+
+## Patch installs
+webmethods_install_patches_descriptor_list:
+  - target_install_dir: "{{ webmethods_install_dir }}"
+    sum_home_dir: "{{ webmethods_install_sum_dir }}"
+    script:
+      bucket_name: "{{ webmethods_s3repo_bucket_name }}"
+      bucket_path: "product_repo/webmethods/10.5/scripts/centrasite/Centrasite105Update.script"
+      local_path: "{{ webmethods_install_common_repo_dir }}/wm_sum_patching.script"
+    binaries_image:
+      bucket_name: "{{ webmethods_s3repo_bucket_name }}"
+      bucket_path: "product_repo/webmethods/10.5/images/fixes/centrasite/softwareag_105_centrasite_linux_x64_fixes_20201201.zip"
+      local_path: "{{ webmethods_install_common_repo_dir }}/wm_sum_patching_image.zip"
+
+## product licenses to download and re-install in real path after the initial install
+webmethods_install_product_license_descriptor_list:
+  - bucket_path: "customer_specifics/IRS/licenses/softwareag/0000563017_CentraSite_ActiveSOA100.xml"
+    local_path: ""
+    force_download: "false"
+
+########################################################

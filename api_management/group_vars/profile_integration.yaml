@@ -1,0 +1,102 @@
+---
+
+## OS settings
+sys_open_ports_springboot_apps:
+  - 7071/tcp
+  - 7072/tcp
+  - 7073/tcp
+
+sys_open_ports: "{{ sys_open_ports_springboot_apps }} + {{ sys_open_ports_spm_all }} + {{ sys_open_ports_integrationserver_all }} + {{ sys_open_ports_terracotta_client_healthcheck_callbacks }}"
+## These ports below should be added only if CLUSTERED terracotta is also running on the IS
+## {{ sys_open_ports_terracotta }}
+
+limits_user: "{{ webmethods_user }}"
+limits_openfiles: "250000"
+limits_processes: "20000"
+
+sysctl_config:
+  vm.max_map_count: "262144"
+  fs.file-max: "{{ limits_openfiles }}"
+
+################### post install settings
+
+webmethods_product_list:
+  - product_name: "integrationserver"
+    product_instance_name: "default"
+    process_memory_min: 4096
+    process_memory_max: 4096
+    process_params: {}
+
+# the ports to check right after the install
+webmethods_postinstall_validation_ports:
+  - 5555
+  - 9999
+
+# the final ports to check for a completely valid install (post install and configure)
+webmethods_validation_ports: "{{ webmethods_postinstall_validation_ports }}"
+
+################### install settings
+
+
+################### install / patching descriptors
+
+## Product install
+webmethods_install_products_descriptor_list:
+  - target_install_dir: "{{ webmethods_install_dir }}"
+    clean_repo_after_install: true
+    installer: "{{ webmethods_install_common_product_installer_descriptor }}"
+    script:
+      # bucket_path: "product_repo/webmethods/10.5/scripts/integrationserver/IS105_Core_Install.script"
+      bucket_path: "product_repo/webmethods/10.5/scripts/integrationserver/IS105_Core_Adapters_Install.script"
+      local_path: "{{ webmethods_install_common_repo_dir }}/IS105_Core_Adapters_Install.script"
+      force_download: true
+    binaries_image:
+      # bucket_path: "product_repo/webmethods/10.5/images/products/softwareag_105_is_core_linux_x64.zip"
+      bucket_path: "product_repo/webmethods/10.5/images/products/softwareag_105_is_stack_linux_x64.zip"
+      local_path: "{{ webmethods_install_common_repo_dir }}/softwareag_105_is_stack_linux_x64.zip"
+    licenses:
+      - bucket_path: "customer_specifics/IRS/licenses/softwareag/0000563008_Integration_Server100.xml"
+        local_path: "{{ webmethods_install_common_repo_dir }}/0000563008_Integration_Server100.xml"
+
+## Patch installs
+webmethods_install_patches_descriptor_list:
+  - target_install_dir: "{{ webmethods_install_dir }}"
+    sum_home_dir: "{{ webmethods_install_sum_dir }}"
+    script:
+      # bucket_path: "product_repo/webmethods/10.5/scripts/integrationserver/IS105_Core_Update.script"
+      bucket_path: "product_repo/webmethods/10.5/scripts/integrationserver/IS105_Core_Adapters_Update.script"
+      local_path: "{{ webmethods_install_common_repo_dir }}/wm_sum_patching.script"
+    binaries_image:
+      # bucket_path: "product_repo/webmethods/10.5/images/fixes/integrationserver/softwareag_105_is_stack_linux_x64_fixes_20201203.zip"
+      bucket_path: "product_repo/webmethods/10.5/images/fixes/integrationserver/softwareag_105_is_stack_linux_x64_fixes_20201203.zip"
+      local_path: "{{ webmethods_install_common_repo_dir }}/wm_sum_patching_image.zip"
+  - target_install_dir: "{{ webmethods_install_dir }}"
+    sum_home_dir: "{{ webmethods_install_sum_dir }}"
+    script:
+      bucket_path: "product_repo/webmethods/10.5/scripts/integrationserver/softwareag_105_OSGI_10.5.0_TestPatch_OGI-2613_v1_1.script"
+      local_path: "{{ webmethods_install_common_repo_dir }}/wm_sum_patching_OSGI_1050_TestPatch_OGI-2613_v1_1.script"
+    binaries_image:
+      bucket_path: "product_repo/webmethods/10.5/images/fixes/integrationserver/softwareag_105_OSGI_10.5.0_TestPatch_OGI-2613_v1_1.zip"
+      local_path: "{{ webmethods_install_common_repo_dir }}/wm_sum_patching_OSGI_1050_TestPatch_OGI-2613_v1_1.zip"
+  - target_install_dir: "{{ webmethods_install_dir }}"
+    sum_home_dir: "{{ webmethods_install_sum_dir }}"
+    script:
+      bucket_path: "product_repo/webmethods/10.5/scripts/integrationserver/softwareag_105_IS_10.5_Core_TestPatch_PIE-66988_v1_2.script"
+      local_path: "{{ webmethods_install_common_repo_dir }}/wm_sum_patching_IS_105_Core_TestPatch_PIE-66988_v1_2.script"
+    binaries_image:
+      bucket_path: "product_repo/webmethods/10.5/images/fixes/integrationserver/softwareag_105_IS_10.5_Core_TestPatch_PIE-66988_v1_2.zip"
+      local_path: "{{ webmethods_install_common_repo_dir }}/wm_sum_patching_IS_105_Core_TestPatch_PIE-66988_v1_2.zip"
+
+## product licenses to download and re-install in real path after the initial install
+webmethods_install_product_license_descriptor_list:
+  - bucket_path: "customer_specifics/IRS/licenses/softwareag/0000563008_Integration_Server100.xml"
+    local_path: "{{ webmethods_install_dir }}/IntegrationServer/config/licenseKey.xml"
+    force_download: "false"
+  - bucket_path: "customer_specifics/IRS/licenses/softwareag/TC Clustering/terracotta-license.key"
+    local_path: "{{ webmethods_install_dir }}/common/conf/terracotta-license.key"
+    force_download: "false"
+  - bucket_path: "customer_specifics/IRS/licenses/softwareag/0000563022_exx103.xml"
+    local_path: "{{ webmethods_install_dir }}/IntegrationServer/config/license.entirex.xml"
+    force_download: "false"
+
+########################################################

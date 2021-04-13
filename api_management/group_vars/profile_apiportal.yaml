@@ -1,0 +1,72 @@
+---
+
+## OS settings
+sys_open_ports: "{{ sys_open_ports_spm_all }} + {{ sys_open_ports_apiportal_all }}"
+
+## extra package to install on this type of server profile
+## note: api portal requires some missing fonts...hence why it's here.
+extra_packages: ["fontconfig", "dejavu*"]
+
+limits_user: "{{ webmethods_user }}"
+limits_openfiles: "250000"
+limits_processes: "20000"
+
+sysctl_config:
+  vm.max_map_count: "262144"
+  fs.file-max: "{{ limits_openfiles }}"
+
+################### post install settings
+
+webmethods_product_list:
+  - product_name: "apiportalacc"
+    product_instance_name: ""
+
+# the ports to check right after the install
+webmethods_postinstall_validation_ports:
+  - 18011
+
+# the final ports to check for a completely valid install (post install and configure)
+webmethods_validation_ports:
+  - 18011
+  - 18101
+
+# special longer timeout because it can take a while for portal to come up, especially on first initial run
+webmethods_validation_ports_timeout: 1200
+
+################### install settings
+
+## Product install
+webmethods_install_products_descriptor_list:
+  - target_install_dir: "{{ webmethods_install_dir }}"
+    installer: "{{ webmethods_install_common_product_installer_descriptor }}"
+    script:
+      bucket_path: "product_repo/webmethods/10.5/scripts/apiportal/APIPortal105Install.script"
+      local_path: "{{ webmethods_install_common_repo_dir }}/APIPortal105Install.script"
+      force_download: true
+    binaries_image:
+      bucket_path: "product_repo/webmethods/10.5/images/products/softwareag_105_apiportal_linux_x64.zip"
+      local_path: "{{ webmethods_install_common_repo_dir }}/softwareag_105_apiportal_linux_x64.zip"
+    licenses:
+      - bucket_path: "customer_specifics/IRS/licenses/softwareag/0000563014_APIPortal101.xml"
+        local_path: "{{ webmethods_install_common_repo_dir }}/0000563014_APIPortal101.xml"
+
+## Patch installs
+webmethods_install_patches_descriptor_list:
+  - target_install_dir: "{{ webmethods_install_dir }}"
+    sum_home_dir: "{{ webmethods_install_sum_dir }}"
+    fixes_overinstall: false
+    sum_selfupdate: false
+    script:
+      bucket_path: "product_repo/webmethods/10.5/scripts/apiportal/APIPortal105Update.script"
+      local_path: "{{ webmethods_install_common_repo_dir }}/APIPortal105Update.script"
+    binaries_image:
+      bucket_path: "product_repo/webmethods/10.5/images/fixes/apiportal/softwareag_105_apiportal_linux_x64_fixes_20201201.zip"
+      local_path: "{{ webmethods_install_common_repo_dir }}/softwareag_105_apiportal_linux_x64_fixes_20201201.zip"
+
+## product licenses to download and re-install in real path after the initial install
+webmethods_install_product_license_descriptor_list:
+  - bucket_path: "customer_specifics/IRS/licenses/softwareag/0000563014_APIPortal101.xml"
+    local_path: ""
+    force_download: "false"
+
+########################################################

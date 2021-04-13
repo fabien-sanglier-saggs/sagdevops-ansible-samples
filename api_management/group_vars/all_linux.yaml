@@ -1,0 +1,13 @@
+---
+
+# aws cli executable
+aws_cli_exe: "/usr/local/bin/aws"
+
+# The variables file used by the playbooks in the all_linux group.
+mandatory_packages:
+  - vim
+  - firewalld
+
+sysctl_config:
+  net.ipv6.conf.all.disable_ipv6: "1"
+  net.ipv6.conf.default.disable_ipv6: "1"

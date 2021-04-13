@@ -1,0 +1,16 @@
+---
+
+## AWS specifics
+aws_region: "us-east-1"
+
+## error if servers are unreachable
+ignore_unreachable: false
+
+## environment globals
+environment_ecosystem: "nonprod"
+environment_level: "dev"
+
+disable_no_log: true
+
+## install limits
+install_downloads_throttle: 10

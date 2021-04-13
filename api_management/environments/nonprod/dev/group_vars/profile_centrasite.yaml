@@ -1,0 +1,8 @@
+---
+
+## registry
+webmethods_centrasite_registry_url: "https://localhost:53313/CentraSite/CentraSite"
+
+## passwords
+webmethods_centrasite_default_adminuser: "{{ vault_webmethods_centrasite_default_adminuser }}"
+webmethods_centrasite_default_adminuser_password: "{{ vault_webmethods_centrasite_default_adminuser_password }}"

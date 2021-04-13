@@ -1,0 +1,29 @@
+---
+
+## value used by the get-inventory-hosts role in order to fetch the right inventory host value
+inventory_hosts_property: "ansible_host"
+inventory_hosts_clear_first: true
+
+## AWS S3 is used to stage the installation files and other artifacts to deploy to various servers
+webmethods_s3repo_bucket_name: "{{ vault_webmethods_s3repo_bucket_name | default('',true) }}"
+webmethods_s3repo_bucket_prefix: "{{ vault_webmethods_s3repo_bucket_prefix | default('',true) }}"
+
+#### access keys for AWS access
+#### note: access key / secret keys are defined in the environmental ansible vaults (encrypted)
+webmethods_user_aws_access_key: "{{ vault_webmethods_user_aws_access_key | default('',true) }}"
+webmethods_user_aws_secret_key: "{{ vault_webmethods_user_aws_secret_key | default('',true) }}"
+webmethods_user_aws_default_region: "{{ aws_region }}"
+webmethods_user_aws_default_output: "json"
+
+## the defaults S3 values to use by default
+## note: bucket name / prefix are sometimes environment specific, so it should be defined in the env specific configs
+getfroms3_defaults_bucket_name: "{{ webmethods_s3repo_bucket_name }}"
+getfroms3_defaults_bucket_prefix: "{{ webmethods_s3repo_bucket_prefix }}"
+getfroms3_defaults_local_path_owner_user:
+getfroms3_defaults_local_path_owner_group:
+getfroms3_defaults_local_path_permission: "0644"
+getfroms3_defaults_local_path_create_dir_ifnotexist: true
+getfroms3_defaults_local_path_create_dir_owner_user:
+getfroms3_defaults_local_path_create_dir_owner_group:
+getfroms3_defaults_local_path_create_dir_permission: "0755"
+getfroms3_defaults_force_download: false
